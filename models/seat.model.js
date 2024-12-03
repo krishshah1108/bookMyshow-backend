@@ -1,24 +1,24 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const seatSchema = new mongoose.Schema(
   {
-    screeningId: { type: mongoose.Schema.Types.ObjectId, ref: "screenings" },
+    screeningId: { type: mongoose.Schema.Types.ObjectId, ref: 'screenings' },
     row: { type: String, required: true },
     column: { type: String, required: true },
     status: {
       type: String,
-      enum: ["available", "booked", "unavailable", "reserved"],
+      enum: ['available', 'booked', 'unavailable', 'reserved'],
       required: true,
     },
     seatType: {
       type: String,
-      enum: ["Normal", "Premium", "VIP"],
+      enum: ['Normal', 'Premium', 'VIP'],
       required: true,
     },
   },
-  { _id: false, versionKey: false }
+  { versionKey: false },
 );
 
-const Seat = mongoose.model("seats", seatSchema);
+const Seat = mongoose.model('seats', seatSchema);
 
 export default Seat;
