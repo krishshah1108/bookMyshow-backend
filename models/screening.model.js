@@ -9,6 +9,7 @@ const priceSchema = new mongoose.Schema(
 );
 const timingSchema = new mongoose.Schema(
   {
+    movieDate: { type: Date, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     price: { type: [priceSchema], required: true },
@@ -21,7 +22,6 @@ const screeningSchema = new mongoose.Schema(
     theatreId: { type: mongoose.Schema.Types.ObjectId, ref: "theatres" },
     screenId: { type: mongoose.Schema.Types.ObjectId, ref: "screens" },
     movieId: { type: mongoose.Schema.Types.ObjectId, ref: "movies" },
-    movieDate: { type: Date, required: true },
     timings: { type: [timingSchema], required: true },
     isDeleted: { type: Boolean, default: false },
   },

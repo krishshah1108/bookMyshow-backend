@@ -9,13 +9,22 @@ const locationSchema = new mongoose.Schema(
   { _id: false, versionKey: false }
 );
 
+const screenSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    capacity: { type: Number, required: true },
+    layoutType: { type: String, enum: ["IMAX", "3D", "2D"], required: true },
+    isActive: { type: Boolean, default: true },
+  },
+  { _id: true, versionKey: false }
+);
+
 const theatreSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     location: { type: locationSchema, required: true },
     screens: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "screens",
+      type: [screenSchema],
       required: true,
     },
     facilities: { type: [String], required: false },
