@@ -52,7 +52,11 @@ const deleteTheatre = async (req, res) => {
     if (!theatreFound) {
       return response.notFound("Theatre not found", res);
     }
-    await models.Theatre.findByIdAndDelete(id);
+    await models.Theatre.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true }
+    );
     return response.success("Theatre deleted successfully", 1, res);
   } catch (error) {
     console.log(error);
@@ -62,8 +66,12 @@ const deleteTheatre = async (req, res) => {
 
 const getAlltheatres = async (req, res) => {
   try {
-    await models.Theatre.find();
-    return response.success("All theatres fetched successfully", 1, res);
+    const allTheatres = await models.Theatre.find();
+    return response.success(
+      "All theatres fetched successfully",
+      allTheatres,
+      res
+    );
   } catch (error) {
     console.log(error);
     return response.failure(error, res);
@@ -119,6 +127,27 @@ const updateScreen = async (req, res) => {
   return response.success("Screen updated successfully", 1, res);
 };
 
+const getAllTheatreWiseScreens = async (req, res) => {
+  try {
+    const data = await models.Theatre.aggregate([
+      {
+        $match: { isActive: true },
+      },
+      {
+        $project: {
+          name: 1,
+          screens: 1,
+        },
+      },
+    ]);
+
+    return response.success("All theatres fetched successfully", data, res);
+  } catch (error) {
+    console.log(error);
+    return response.failure(error, res);
+  }
+};
+
 const theatreController = {
   addTheatre,
   updateTheatre,
@@ -127,6 +156,7 @@ const theatreController = {
   addScreen,
   deleteScreen,
   updateScreen,
+  getAllTheatreWiseScreens,
 };
 
 export default theatreController;
