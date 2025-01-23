@@ -2,6 +2,7 @@ import models from "../../../models/zindex.js";
 import response from "../../../utils/response_util.js";
 import jwt from "jsonwebtoken";
 import { encrypt, decrypt } from "../../../utils/encryptor_util.js";
+import { generateToken } from "../../../utils/helper_util.js";
 // const sendOtpAndLogin = async (req, res) => {
 //   try {
 //     const { name, phone } = req.body;
@@ -63,7 +64,15 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
     });
     await newUser.save();
-    return response.success("User registered successfully", 1, res);
+    const token = generateToken({ id: newUser._id });
+    const hashedToken = encrypt(token);
+    res.cookie("token", hashedToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    return response.success("User registered successfully", hashedToken, res);
   } catch (error) {
     console.log(error);
     return response.failure(error, res);
@@ -80,9 +89,7 @@ const loginUser = async (req, res) => {
       if (!isPwdMatch) {
         return response.badRequest("Invalid email or password", res);
       } else {
-        const token = jwt.sign({ id: userFound._id }, process.env.JWT_SECRET, {
-          expiresIn: "24d",
-        });
+        const token = generateToken({ id: userFound._id });
         const hashedToken = encrypt(token);
         res.cookie("token", hashedToken, {
           httpOnly: true,
